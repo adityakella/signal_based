@@ -1,19 +1,25 @@
 import pandas as pd
 import numpy as np
-from strategy.generator import BaseStrategy
+from strategy.generator import BaseStrategy, strategyname
 import matplotlib.pyplot as plt
 
 class Backtester:
-    def __init__(self, strategy: BaseStrategy, start = None, end = None):
-        self.strategy = strategy
-        self.start = strategy.asset.start if start is None else start
-        self.end = strategy.asset.end if end is None else end
+    def __init__(self, df: pd.DataFrame, strategy_name: strategyname, start = None, end = None):
+        self.df = df
+        self.strategy = strategy_name.value
+        self.start = start
+        self.end = end
 
     def test(self):
-        self.strategy.asset.data["trade_return"] = self.strategy.asset.data["return"]*self.strategy.asset.data["signal"]
-        self.strategy.asset.data["cumulative_trade_return"] = self.strategy.asset.data["trade_return"].cumsum()
-        plt.plot(self.strategy.asset.data["cumulative_trade_return"])
-        plt.savefig("equity_chart.jpg")
-        _ = self.strategy.asset.data["trade_return"] >= 0
-        self.win_rate = _.sum()/len(self.strategy.asset.data["trade_return"])
+        trade_return = "_".join([self.strategy,"trade_return"])
+        cumulative_trade_return = "_".join([self.strategy,"cumulative_trade_return"])
+        signal = "_".join([self.strategy,"signal"])
+
+        self.df[trade_return] = self.df["return"]*self.df[signal]
+        self.df[cumulative_trade_return] = self.df[trade_return].cumsum()
+
+        plt.plot(self.df[cumulative_trade_return])
+        
+        _ = self.df[trade_return] >= 0
+        self.win_rate = _.sum()/len(self.df[trade_return])
         print(f"win_rate:{self.win_rate}")
