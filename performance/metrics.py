@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from strategy.generator import strategyname
+import matplotlib.pyplot as plt
 
 def max_drawdown(df: pd.DataFrame, strategy_name: strategyname) -> dict[str: any]:
     cumulative_trade_return = df["_".join([strategy_name.value,"cumulative_trade_return"])]
@@ -9,8 +10,9 @@ def max_drawdown(df: pd.DataFrame, strategy_name: strategyname) -> dict[str: any
     trough_date = drawdown.idxmin()
     peak_date = cumulative_trade_return[:trough_date].idxmax()
     mdd = drawdown.min()
-    cumulative_trade_return.plot()
-    cumulative_trade_return[peak_date:trough_date].plot()
+    cumulative_trade_return.plot(label = strategy_name.value)
+    cumulative_trade_return[peak_date:trough_date].plot(label = "max drawdown")
+    plt.legend()
 
     return {
         "max_drawdown": mdd,
@@ -19,9 +21,12 @@ def max_drawdown(df: pd.DataFrame, strategy_name: strategyname) -> dict[str: any
     }
 
 def buy_and_hold(df: pd.DataFrame, strategy_name: strategyname) -> float:
-    cumulative_return = df["return"].cumsum()
-    cumulative_bh_trade_return = df["_".join([strategy_name.value,"cumulative_trade_return"])]
-    return cumulative_bh_trade_return.iloc[-1]
+    cumulative_bh_return = df["return"].cumsum()
+    cumulative_trade_return = df["_".join([strategy_name.value,"cumulative_trade_return"])]
+    cumulative_bh_return.plot(label="Buy & Hold")
+    cumulative_trade_return.plot(label=strategy_name.value)
+    plt.legend()
+    return cumulative_bh_return.iloc[-1]
 
 def sharpe_ratio():
     pass

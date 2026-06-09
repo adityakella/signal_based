@@ -7,6 +7,7 @@ class Backtester:
     def __init__(self, df: pd.DataFrame, strategy_name: strategyname) -> dict[str: float]:
         self.df = df
         self.strategy = strategy_name.value
+        print(self.strategy)
 
     def test(self):
         trade_return = "_".join([self.strategy,"trade_return"])
@@ -18,9 +19,16 @@ class Backtester:
 
         #plt.plot(self.df[cumulative_trade_return])
         
-        winning_trades = self.df[trade_return] >= 0
+        winning_trades = self.df[trade_return].dropna() > 0
+        neutral_trades = self.df[trade_return].dropna() == 0
+        losing_trades = self.df[trade_return].dropna() < 0
         self.win_rate = winning_trades.sum()/self.df[trade_return].count()
         
         return {
+            "# winning trades" : winning_trades.sum(),
+            "# losing trades" : losing_trades.sum(),
+            "# neutral trades" : neutral_trades.sum(),
+            "# na trades" : self.df[trade_return].isna().sum(),
+            "# total trades" : self.df[trade_return].count(),
             "win_rate": self.win_rate
         }
