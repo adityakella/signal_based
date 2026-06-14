@@ -17,7 +17,7 @@ class BaseStrategy(ABC):
 
     @abstractmethod
     def check_strategy_evidence(self):
-        self.df["trend_following_signal"] = self.df["direction"]
+        print(self.df.groupby("direction")["return"].agg(["mean", "count", "sum"]))
         self.ljung_box()
 
     @abstractmethod
@@ -29,6 +29,9 @@ class BaseStrategy(ABC):
 
 
 class MeanReversionStrategy(BaseStrategy):
+
+    strategy = strategyname.MEAN_REVERSION
+
     def __init__(self, df: pd.DataFrame):
         self.df = df
     
@@ -37,7 +40,8 @@ class MeanReversionStrategy(BaseStrategy):
         self.generate_signal()
 
     def generate_signal(self):
-        self.df["_".join([strategyname.MEAN_REVERSION.value,"signal"])] = -1*self.df["direction"]
+        signal = "_".join([self.strategy.value,"signal"])
+        self.df[signal] = -1*self.df["direction"]    
 
     def check_strategy_evidence(self):
         super().check_strategy_evidence() 
@@ -46,6 +50,9 @@ class MeanReversionStrategy(BaseStrategy):
         super().ljung_box()
 
 class TrendFollowingStrategy(BaseStrategy):
+
+    strategy = strategyname.TREND_FOLLOWING
+
     def __init__(self, df: pd.DataFrame):
         self.df = df
 
@@ -54,7 +61,8 @@ class TrendFollowingStrategy(BaseStrategy):
         self.generate_signal()
 
     def generate_signal(self):
-        self.df["_".join([strategyname.TREND_FOLLOWING.value,"signal"])] = self.df["direction"]
+        signal = "_".join([self.strategy.value,"signal"])
+        self.df[signal] = self.df["direction"]
 
     def check_strategy_evidence(self):
         super().check_strategy_evidence() 

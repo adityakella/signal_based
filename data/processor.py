@@ -8,4 +8,5 @@ def calculate_features(df: pd.DataFrame, window: int = 1) -> pd.DataFrame:
     df["return"] = np.log(ratio)
     return_lag = df["return"].shift(window)
     df["direction"] = np.sign(return_lag)
+    df.fillna({"return":0, "direction":0}, inplace=True)
     return df

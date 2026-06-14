@@ -21,9 +21,10 @@ def max_drawdown(df: pd.DataFrame, strategy_name: strategyname) -> dict[str: any
     }
 
 def buy_and_hold(df: pd.DataFrame, strategy_name: strategyname) -> float:
-    cumulative_bh_return = df["return"].cumsum()
+    bh_return = df["return"].copy()
+    cumulative_bh_return = bh_return.cumsum()
     cumulative_trade_return = df["_".join([strategy_name.value,"cumulative_trade_return"])]
-    cumulative_bh_return.plot(label="Buy & Hold")
+    cumulative_bh_return.plot(label="Buy & Hold (without tc)")
     cumulative_trade_return.plot(label=strategy_name.value)
     plt.legend()
     return cumulative_bh_return.iloc[-1]
