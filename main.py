@@ -5,7 +5,7 @@ from data.asset import Asset
 from data.processor import calculate_features
 from strategy.generator import strategyname, MeanReversionStrategy, TrendFollowingStrategy
 from performance.backtest import Backtester
-from performance.metrics import max_drawdown, buy_and_hold
+from performance.metrics import max_drawdown, buy_and_hold, sharpe_ratio
 with open("config.json") as f:
     config = json.load(f)
 
@@ -23,3 +23,5 @@ max_drawdown(stock.data, strategyname.MEAN_REVERSION)
 max_drawdown(stock.data, strategyname.TREND_FOLLOWING)
 buy_and_hold(stock.data, strategyname.MEAN_REVERSION)
 buy_and_hold(stock.data, strategyname.TREND_FOLLOWING)
+sharpe_ratio(stock.data, strategyname.MEAN_REVERSION)
+sharpe_ratio(stock.data, strategyname.TREND_FOLLOWING)

@@ -29,6 +29,10 @@ def buy_and_hold(df: pd.DataFrame, strategy_name: strategyname) -> float:
     plt.legend()
     return cumulative_bh_return.iloc[-1]
 
-def sharpe_ratio():
-    pass
+def sharpe_ratio(df: pd.DataFrame, strategy_name: strategyname, rf: float = 0.0):
+    trade_return = "_".join([strategy_name.value,"trade_return"])
+    mean_trade_return = df[trade_return].mean()
+    std_trade_return = df[trade_return].std()
+
+    return (mean_trade_return - rf)/std_trade_return
 
